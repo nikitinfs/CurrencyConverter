@@ -40,5 +40,21 @@ def callback_inline(call):
             keyboard.row(
                 telebot.types.InlineKeyboardButton('2. Transfer money to another currency', callback_data='meth2'))
             bot.send_message(call.message.chat.id, 'Select an action:', reply_markup=keyboard)
+        elif call.data == 'meth1':
+            if language_id == 1:
+                keyboard = telebot.types.InlineKeyboardMarkup()
+                keyboard.row(
+                    telebot.types.InlineKeyboardButton('USD', callback_data='usd'),
+                    telebot.types.InlineKeyboardButton('EUR', callback_data='eur'),
+                    telebot.types.InlineKeyboardButton('GBP', callback_data='gbp'))
+                bot.send_message(call.message.chat.id, 'Выберите валюту:', reply_markup=keyboard)
+        elif call.data == 'usd':
+            bot.send_message(call.message.chat.id, 'Курс доллара: ' + str(exc.kurs(config.USD)))
+        elif call.data == 'eur':
+            bot.send_message(call.message.chat.id, 'Курс евро: ' + str(exc.kurs(config.EUR)))
+        elif call.data == 'gbp':
+            bot.send_message(call.message.chat.id, 'Курс фунта: ' + str(exc.kurs(config.GBP)))
+        elif call.data == 'meth2':
+            bot.send_message(call.message.chat.id, 'Выберите валюту для обмена:', reply_markup=exc.keyb1)
 
 bot.polling(none_stop=True)
