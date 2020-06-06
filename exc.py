@@ -36,4 +36,38 @@ def exchange(name_1, quantity_1, name_2):
     elif name_1 == "RUB" and name_2 == "GBP":
         k = kurs(config.GBP)
         quantity_2 = quantity_1/k
+    elif name_1 == "USD" and name_2 == "RUB":
+        k = kurs(config.USD)
+        quantity_2 = quantity_1 * k
+    elif name_1 == "USD" and name_2 == "EUR":
+        k = kurs(config.EUR)
+        k1 = kurs(config.USD)
+        quantity_2 = k1 * quantity_1/k
+    elif name_1 == "USD" and name_2 == "GBP":
+        k = kurs(config.GBP)
+        k1 = kurs(config.USD)
+        quantity_2 = quantity_1 * k1 / k
+    elif name_1 == "EUR" and name_2 == "RUB":
+        k = kurs(config.EUR)
+        quantity_2 = quantity_1 * k
+    elif name_1 == "EUR" and name_2 == "USD":
+        k = kurs(config.USD)
+        k1 = kurs(config.EUR)
+        quantity_2 = k1 * quantity_1/k
+    elif name_1 == "EUR" and name_2 == "GBP":
+        k = kurs(config.GBP)
+        k1 = kurs(config.EUR)
+        quantity_2 = quantity_1 * k1 / k
+    elif name_1 == "GBP" and name_2 == "RUB":
+        k = kurs(config.GBP)
+        quantity_2 = quantity_1 * k
+    elif name_1 == "GBP" and name_2 == "EUR":
+        k = kurs(config.EUR)
+        k1 = kurs(config.GBP)
+        quantity_2 = k1 * quantity_1/k
+    elif name_1 == "GBP" and name_2 == "USD":
+        k = kurs(config.USD)
+        k1 = kurs(config.GBP)
+        quantity_2 = quantity_1 * k1 / k
+
     return quantity_2
