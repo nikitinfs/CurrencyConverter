@@ -4,6 +4,8 @@ import exc
 
 bot = telebot.TeleBot(config.token)
 
+parametrs = ['', '', '']
+
 language_id = 0
 
 
@@ -41,13 +43,17 @@ def callback_inline(call):
                 telebot.types.InlineKeyboardButton('2. Transfer money to another currency', callback_data='meth2'))
             bot.send_message(call.message.chat.id, 'Select an action:', reply_markup=keyboard)
         elif call.data == 'meth1':
+            message = ''
             if language_id == 1:
-                keyboard = telebot.types.InlineKeyboardMarkup()
-                keyboard.row(
+                message = "Выберите валюту: "
+            elif language_id == 2:
+                message = "Choose currency: "
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            keyboard.row(
                     telebot.types.InlineKeyboardButton('USD', callback_data='usd'),
                     telebot.types.InlineKeyboardButton('EUR', callback_data='eur'),
                     telebot.types.InlineKeyboardButton('GBP', callback_data='gbp'))
-                bot.send_message(call.message.chat.id, 'Выберите валюту:', reply_markup=keyboard)
+            bot.send_message(call.message.chat.id, message, reply_markup=keyboard)
         elif call.data == 'usd':
             bot.send_message(call.message.chat.id, 'Курс доллара: ' + str(exc.kurs(config.USD)))
         elif call.data == 'eur':
@@ -55,6 +61,36 @@ def callback_inline(call):
         elif call.data == 'gbp':
             bot.send_message(call.message.chat.id, 'Курс фунта: ' + str(exc.kurs(config.GBP)))
         elif call.data == 'meth2':
-            bot.send_message(call.message.chat.id, 'Выберите валюту для обмена:', reply_markup=exc.keyb1)
+            message = ''
+            if language_id == 1:
+                message = "Выберите валюту для обмена: "
+            elif language_id == 2:
+                message = "Select currency to exchange: "
+            bot.send_message(call.message.chat.id, message, reply_markup=exc.keyb1)
+
+
+@bot.message_handler(commands=['exchange'])
+def meth_exchange(message):
+    bot.send_message(message.chat.id, 'Выберите валюту для обмена:', reply_markup=exc.keyb1)
+
+@bot.message_handler(content_types=['text'])
+def get_name(message):
+    parametrs[0] = message.text
+    bot.send_message(message.chat.id, 'Напишите сумму для обмена' )
+    bot.register_next_step_handler(message, get_quantity)
+
+def get_quantity(message):
+    parametrs[1] = message.text
+    bot.send_message(message.chat.id, 'Выберите желаемую валюту',  reply_markup=exc.keyb1)
+    bot.register_next_step_handler(message, get_name2)
+
+def get_name2(message):
+    parametrs[2] = message.text
+    k = exc.exchange(parametrs[0], float(parametrs[1]), parametrs[2])
+    bot.send_message(message.chat.id, parametrs[1] + ' ' + parametrs[0] + ' = ' + str(k) + ' ' + parametrs[2])
+    print(parametrs)
+
+
+
 
 bot.polling(none_stop=True)
