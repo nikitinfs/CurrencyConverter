@@ -24,6 +24,38 @@ def start_command(message):
         message.chat.id,
         'Привет! Выбери язык:', reply_markup=keyboard)
 
+@bot.message_handler(commands=['help'])
+def help_command(message):
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    message_lan = ''
+    if language_id == 1:
+        message_lan = "Написать разработчику"
+    elif language_id == 2:
+        message_lan = "Message the developer"
+    keyboard.add(
+        telebot.types.InlineKeyboardButton(
+            message_lan, url='telegram.me/babessssssss'
+        )
+    )
+    if language_id == 1:
+        bot.send_message(
+        message.chat.id,
+        '1) Для обмена валюты нажмите /exchange.\n' +
+        '2) Нажмите на интересующую вас валюту.\n' +
+        '3) Вы получите сообщение, содержащее информацию о валюте.\n' +
+        '4) Нажмите "обновить",чтобы получить информацию относительно запроса.\n' +
+        '5) Бот поддерживает режим инлайн. Наберите @currencyex_bot в любом чате.',
+        reply_markup=keyboard )
+    elif language_id == 2:
+        bot.send_message(
+            message.chat.id,
+            '1) To exchange currency press /exchange.\n' +
+            '2) Click on the currency you are interested in.\n' +
+            '3) You will receive a message containing information regarding the currency. \n' +
+            '4) Click “Update” to receive the current information regarding the request. \n' +
+            '5) The bot supports inline. Type @currencyex_bot in any chat.',
+            reply_markup=keyboard)
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
