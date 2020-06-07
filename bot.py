@@ -192,17 +192,32 @@ def callback_inline(call):
 
 @bot.message_handler(commands=['exchange'])
 def meth_exchange(message):
-    bot.send_message(message.chat.id, 'Выберите валюту для обмена:', reply_markup=exc.keyb1)
+    message_lan = ''
+    if language_id == 1:
+        message_lan = "Выберите валюту для обмена"
+    elif language_id == 2:
+        message_lan = "Select currency to exchange"
+    bot.send_message(message.chat.id, message_lan, reply_markup=exc.keyb1)
 
 @bot.message_handler(content_types=['text'])
 def get_name(message):
+    message_lan =''
+    if language_id == 1:
+        message_lan = "Напишите сумму для обмена"
+    elif language_id == 2:
+        message_lan = 'Type the amount for exchange'
     parametrs[0] = message.text
-    bot.send_message(message.chat.id, 'Напишите сумму для обмена' )
+    bot.send_message(message.chat.id, message_lan)
     bot.register_next_step_handler(message, get_quantity)
 
 def get_quantity(message):
+    message_lan = ''
+    if language_id == 1:
+        message_lan = "Выберите желаемую валюту"
+    elif language_id == 2:
+        message_lan = 'Choose preferred currency'
     parametrs[1] = message.text
-    bot.send_message(message.chat.id, 'Выберите желаемую валюту',  reply_markup=exc.keyb1)
+    bot.send_message(message.chat.id, message_lan,  reply_markup=exc.keyb1)
     bot.register_next_step_handler(message, get_name2)
 
 def get_name2(message):
@@ -210,8 +225,6 @@ def get_name2(message):
     k = exc.exchange(parametrs[0], float(parametrs[1]), parametrs[2])
     bot.send_message(message.chat.id, parametrs[1] + ' ' + parametrs[0] + ' = ' + str(k) + ' ' + parametrs[2])
     print(parametrs)
-
-
 
 
 bot.polling(none_stop=True)
