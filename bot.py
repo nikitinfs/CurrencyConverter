@@ -7,6 +7,8 @@ bot = telebot.TeleBot(config.token)
 parametrs = ['', '', '']
 
 language_id = 0
+currency_id = ''
+currency_name = ''
 
 
 @bot.message_handler(commands=['start'])
@@ -25,6 +27,8 @@ def start_command(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     global language_id
+    global currency_id
+    global currency_name
     if call.message:
         if call.data == 'ru':
             language_id = 1
@@ -54,12 +58,92 @@ def callback_inline(call):
                     telebot.types.InlineKeyboardButton('EUR', callback_data='eur'),
                     telebot.types.InlineKeyboardButton('GBP', callback_data='gbp'))
             bot.send_message(call.message.chat.id, message, reply_markup=keyboard)
+
+        elif call.data == 'update':
+            k = exc.kurs(currency_id)
+            messagem4 = ['', '', '', '']
+            if language_id == 1:
+                messagem4[0] = "Курс "
+                messagem4[1] = 'Поделиться'
+                messagem4[2] = "Обновить"
+                messagem4[3] = 'Обновлено: '
+            elif language_id == 2:
+                messagem4[0] = "Rate "
+                messagem4[1] = 'Share'
+                messagem4[2] = "Update"
+                messagem4[3] = 'Updated: '
+            answer = messagem4[0] + currency_name + ': ' + str(k)
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            keyboard.row(
+                telebot.types.InlineKeyboardButton(messagem4[1], switch_inline_query=answer),
+                telebot.types.InlineKeyboardButton(messagem4[2], callback_data='update'))
+            bot.send_message(call.message.chat.id, answer + "\n"
+                             + messagem4[3] , reply_markup=keyboard)
         elif call.data == 'usd':
-            bot.send_message(call.message.chat.id, 'Курс доллара: ' + str(exc.kurs(config.USD)))
+            messagem = ['', '', '']
+            if language_id == 1:
+                messagem[0] = 'Курс доллара: '
+                messagem[1] = 'Поделиться'
+                messagem[2] = 'Обновить'
+            elif language_id == 2:
+                messagem[0] = 'Dollar rate: '
+                messagem[1] = 'Share'
+                messagem[2] = 'Update'
+            k = exc.kurs(config.USD)
+            answer = messagem[0] + str(k)
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            keyboard.row(
+                telebot.types.InlineKeyboardButton(messagem[1], switch_inline_query=answer),
+                telebot.types.InlineKeyboardButton(messagem[2], callback_data='update'))
+            bot.send_message(call.message.chat.id, answer, reply_markup=keyboard)
+            currency_id = config.USD
+            if language_id == 1:
+                currency_name = "доллар"
+            elif language_id == 2:
+                currency_name = 'dollar'
         elif call.data == 'eur':
-            bot.send_message(call.message.chat.id, 'Курс евро: ' + str(exc.kurs(config.EUR)))
+            messagem = ['', '', '']
+            if language_id == 1:
+                messagem[0] = 'Курс евро: '
+                messagem[1] = 'Поделиться'
+                messagem[2] = 'Обновить'
+            elif language_id == 2:
+                messagem[0] = 'Euro rate: '
+                messagem[1] = 'Share'
+                messagem[2] = 'Update'
+            k = exc.kurs(config.EUR)
+            answer = messagem[0] + str(k)
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            keyboard.row(
+                telebot.types.InlineKeyboardButton(messagem[1], switch_inline_query=answer),
+                telebot.types.InlineKeyboardButton(messagem[2], callback_data='update'))
+            bot.send_message(call.message.chat.id, answer, reply_markup=keyboard)
+            currency_id = config.EUR
+            if language_id == 1:
+                currency_name = "евро"
+            elif language_id == 2:
+                currency_name = 'euro'
         elif call.data == 'gbp':
-            bot.send_message(call.message.chat.id, 'Курс фунта: ' + str(exc.kurs(config.GBP)))
+            messagem = ['', '', '']
+            if language_id == 1:
+                messagem[0] = 'Курс фунта: '
+                messagem[1] = 'Поделиться'
+                messagem[2] = 'Обновить'
+            elif language_id == 2:
+                messagem[0] = 'Pound rate: '
+                messagem[1] = 'Share'
+                messagem[2] = 'Update'
+            answer = 'Курс фунта: ' + str(exc.kurs(config.GBP))
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            keyboard.row(
+                telebot.types.InlineKeyboardButton(messagem[1], switch_inline_query=answer),
+                telebot.types.InlineKeyboardButton(messagem[2], callback_data='update'))
+            bot.send_message(call.message.chat.id, answer, reply_markup=keyboard)
+            currency_id = config.GBP
+            if language_id == 1:
+                currency_name = "фунта"
+            elif language_id == 2:
+                currency_name = 'GBP'
         elif call.data == 'meth2':
             message = ''
             if language_id == 1:
@@ -67,6 +151,7 @@ def callback_inline(call):
             elif language_id == 2:
                 message = "Select currency to exchange: "
             bot.send_message(call.message.chat.id, message, reply_markup=exc.keyb1)
+
 
 
 @bot.message_handler(commands=['exchange'])
