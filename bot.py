@@ -1,6 +1,7 @@
 import telebot
 import config
 import exc
+import datetime
 
 bot = telebot.TeleBot(config.token)
 
@@ -73,12 +74,15 @@ def callback_inline(call):
                 messagem4[2] = "Update"
                 messagem4[3] = 'Updated: '
             answer = messagem4[0] + currency_name + ': ' + str(k)
+            timenow = datetime.datetime.now()
+            timenow = str(timenow)
+            timenow = timenow[:16]
             keyboard = telebot.types.InlineKeyboardMarkup()
             keyboard.row(
                 telebot.types.InlineKeyboardButton(messagem4[1], switch_inline_query=answer),
                 telebot.types.InlineKeyboardButton(messagem4[2], callback_data='update'))
             bot.send_message(call.message.chat.id, answer + "\n"
-                             + messagem4[3] , reply_markup=keyboard)
+                             + messagem4[3] + timenow, reply_markup=keyboard)
         elif call.data == 'usd':
             messagem = ['', '', '']
             if language_id == 1:
