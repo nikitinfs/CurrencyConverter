@@ -226,5 +226,39 @@ def get_name2(message):
     bot.send_message(message.chat.id, parametrs[1] + ' ' + parametrs[0] + ' = ' + str(k) + ' ' + parametrs[2])
     print(parametrs)
 
+@bot.inline_handler(func=lambda query: True)
+def query_text(inline_query):
+    res = exc.Curses()
+    bot.answer_inline_query(
+        inline_query.id,
+        get_iq_articles(res)
+    )
+
+
+def get_iq_articles(exchanges):
+    result = []
+    names = ["USD", "EUR", "GBP"]
+    k = 0
+    messagem = ['', '', '']
+    if language_id == 1:
+        messagem[0] = 'Перейти в бот'
+        messagem[1] = 'Курс '
+        messagem[2] = 'Обменять RUB'
+    if language_id == 1:
+        messagem[0] = 'Go to bot'
+        messagem[1] = 'Rate  '
+        messagem[2] = 'Convert RUB'
+
+    for i in exchanges:
+        keyboard = telebot.types.InlineKeyboardMarkup()
+        keyboard.row(telebot.types.InlineKeyboardButton(messagem[0], url=config.url))
+        result.append(
+            telebot.types.InlineQueryResultArticle(id=k, title=names[k],
+	        input_message_content=telebot.types.InputTextMessageContent(messagem[1] + names[k] + ": " + str(exchanges[k])),
+            reply_markup=keyboard, description = messagem[2] + ' -> ' + names[k]))
+        k = k + 1
+    return result
+
 
 bot.polling(none_stop=True)
+

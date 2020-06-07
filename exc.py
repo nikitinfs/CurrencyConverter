@@ -70,4 +70,12 @@ def exchange(name_1, quantity_1, name_2):
         k1 = kurs(config.GBP)
         quantity_2 = quantity_1 * k1 / k
 
+    quantity_2 = round(quantity_2, 2)
     return quantity_2
+
+def Curses():
+    result = []
+    result.append(kurs(config.USD))
+    result.append(kurs(config.EUR))
+    result.append(kurs(config.GBP))
+    return result
